@@ -11,25 +11,33 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #282828;
-            color: #00ff00;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 3rem;
+            background-color: #000;
+            font-family: 'Digital-7', monospace;
+        }
+        @font-face {
+            font-family: 'Digital-7';
+            src: url('https://fonts.gstatic.com/s/digital7/v10/v7_RH1cD3H-_4_51HwJZJxQ.ttf') format('truetype');
         }
         .clock {
-            border: 2px solid #00ff00;
-            padding: 20px;
-            border-radius: 10px;
+            border: 5px solid #00ff00;
+            padding: 30px;
+            border-radius: 20px;
             background-color: #000;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
         }
         .date {
-            font-size: 1.5rem;
+            font-size: 2.5rem;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            color: #ff00ff; /* Pink color for date */
         }
         .time {
+            font-size: 6rem;
             text-align: center;
+            color: #00ff00; /* Green color for time */
+        }
+        .time span {
+            color: #ff0000; /* Red color for AM/PM */
         }
     </style>
 </head>
@@ -38,6 +46,12 @@
         <div class="date" id="date"></div>
         <div class="time" id="time"></div>
     </div>
+
+    <!-- Background sound of Tick Tick -->
+    <audio id="tickSound" loop>
+        <source src="https://www.soundjay.com/misc/sounds/clock-ticking-1.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
 
     <script>
         function updateClock() {
@@ -50,13 +64,19 @@
             const dateString = now.toLocaleDateString(undefined, options);
             dateElement.textContent = dateString;
 
-            // Format time
-            const hours = String(now.getHours()).padStart(2, '0');
+            // Format time with AM/PM
+            let hours = now.getHours();
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            timeElement.textContent = timeString;
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12; // Convert to 12-hour format
+            const timeString = `${hours}:${minutes}:${seconds} <span>${ampm}</span>`;
+            timeElement.innerHTML = timeString;
         }
+
+        // Play the tick sound
+        const tickSound = document.getElementById('tickSound');
+        tickSound.play();
 
         // Update the clock every second
         setInterval(updateClock, 1000);
@@ -65,4 +85,4 @@
         updateClock();
     </script>
 </body>
-  </html>
+</html>
