@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Clock</title>
+    <title>Digital Clock with Alarm</title>
     <style>
         body {
             display: flex;
@@ -24,20 +24,44 @@
             border-radius: 20px;
             background-color: #000;
             box-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
+            text-align: center;
         }
         .date {
             font-size: 2.5rem;
-            text-align: center;
             margin-bottom: 20px;
             color: #ff00ff; /* Pink color for date */
         }
         .time {
             font-size: 6rem;
-            text-align: center;
             color: #00ff00; /* Green color for time */
         }
         .time span {
             color: #ff0000; /* Red color for AM/PM */
+        }
+        .alarm {
+            margin-top: 20px;
+        }
+        .alarm input {
+            font-size: 1.2rem;
+            padding: 10px;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            background-color: #000;
+            color: #00ff00;
+        }
+        .alarm button {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            background-color: #000;
+            color: #00ff00;
+            cursor: pointer;
+        }
+        .alarm button:hover {
+            background-color: #00ff00;
+            color: #000;
         }
     </style>
 </head>
@@ -45,6 +69,11 @@
     <div class="clock">
         <div class="date" id="date"></div>
         <div class="time" id="time"></div>
+        <div class="alarm">
+            <input type="time" id="alarmTime">
+            <button onclick="setAlarm()">Set Alarm</button>
+            <button onclick="stopAlarm()">Stop Alarm</button>
+        </div>
     </div>
 
     <!-- Background sound of Tick Tick -->
@@ -53,7 +82,25 @@
         Your browser does not support the audio element.
     </audio>
 
+    <!-- Alarm sound -->
+    <audio id="alarmSound">
+        <source src="https://www.soundjay.com/misc/sounds/alarm-clock-01.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Hourly chime sound -->
+    <audio id="hourlyChime">
+        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-01.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
     <script>
+        const tickSound = document.getElementById('tickSound');
+        const alarmSound = document.getElementById('alarmSound');
+        const hourlyChime = document.getElementById('hourlyChime');
+        let alarmTime = null;
+
+        // Function to update the clock
         function updateClock() {
             const now = new Date();
             const dateElement = document.getElementById('date');
@@ -72,10 +119,39 @@
             hours = hours % 12 || 12; // Convert to 12-hour format
             const timeString = `${hours}:${minutes}:${seconds} <span>${ampm}</span>`;
             timeElement.innerHTML = timeString;
+
+            // Check for alarm
+            if (alarmTime && hours === alarmTime.getHours() && minutes === String(alarmTime.getMinutes()).padStart(2, '0')) {
+                alarmSound.play();
+                alarmTime = null; // Reset alarm after it rings
+            }
+
+            // Play hourly chime at the top of the hour
+            if (minutes === '00' && seconds === '00') {
+                hourlyChime.play();
+            }
+        }
+
+        // Function to set the alarm
+        function setAlarm() {
+            const alarmTimeInput = document.getElementById('alarmTime').value;
+            if (!alarmTimeInput) {
+                alert('Please set a valid time for the alarm.');
+                return;
+            }
+            const [hours, minutes] = alarmTimeInput.split(':');
+            const now = new Date();
+            alarmTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+            alert(`Alarm set for ${alarmTime.toLocaleTimeString()}`);
+        }
+
+        // Function to stop the alarm
+        function stopAlarm() {
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
         }
 
         // Play the tick sound
-        const tickSound = document.getElementById('tickSound');
         tickSound.play();
 
         // Update the clock every second
