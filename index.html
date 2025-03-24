@@ -87,7 +87,7 @@
 
     <!-- Background sound of Tick Tick -->
     <audio id="tickSound" loop>
-        <source src="tick.mp3" type="audio/mpeg">
+        <source src="https://www.soundjay.com/misc/sounds/clock-ticking-1.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
@@ -188,8 +188,10 @@
             }
         }
 
-        // Play the tick sound
-        tickSound.play();
+        // Play the tick sound after user interaction
+        document.addEventListener('click', () => {
+            tickSound.play();
+        });
 
         // Update the clock every second
         setInterval(updateClock, 1000);
@@ -202,4 +204,4 @@
         fetchWeather();
     </script>
 </body>
-</html>
+        </html>
