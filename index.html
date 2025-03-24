@@ -188,10 +188,18 @@
             }
         }
 
-        // Play the tick sound after user interaction
-        document.addEventListener('click', () => {
-            tickSound.play();
-        });
+        // Play the tick sound when page loads
+        window.onload = function() {
+            // Many browsers require sound to be played after user interaction,
+            // so we'll try to play it and catch any errors
+            tickSound.play().catch(e => {
+                console.log("Autoplay was prevented. Please click anywhere to start the sound.");
+                // Add a click event listener to start the sound on first user interaction
+                document.addEventListener('click', function() {
+                    tickSound.play();
+                }, { once: true });
+            });
+        };
 
         // Update the clock every second
         setInterval(updateClock, 1000);
@@ -204,4 +212,4 @@
         fetchWeather();
     </script>
 </body>
-        </html>
+    </html>
